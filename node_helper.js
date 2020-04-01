@@ -78,6 +78,7 @@ module.exports = NodeHelper.create({
                             .then(() => {
                                 // Decoding finished
                                 fs.unlink(destFile);
+                                this.sendNotification('PLAY_SOUND', fileName + '.wav');
                             })
                             .catch(error => {
                                 // Something went wrong
