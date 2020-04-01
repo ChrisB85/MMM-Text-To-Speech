@@ -67,7 +67,7 @@ module.exports = NodeHelper.create({
             that.sendSocketNotification('MMM-TTS-PLAY_SOUND', 'tts/' + fileName + '.wav');
             return;
         }
-        var destFile = path.resolve(__dirname, fileName + '.mp3'); // file destination
+        var destFile = path.resolve(destDir, fileName + '.mp3'); // file destination
         googleTTS(text, 'pl', 1)
                 .then((url) => {
                     console.log(url); // https://translate.google.com/translate_tts?...
@@ -83,7 +83,6 @@ module.exports = NodeHelper.create({
                     }).setFile(destFile);
                     decoder.decode()
                             .then(function () {
-                                fs.unlink(destFile);
                                 // Play file
                                 that.sendSocketNotification('MMM-TTS-PLAY_SOUND', 'tts/' + fileName + '.wav');
                             })
