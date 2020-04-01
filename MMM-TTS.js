@@ -147,12 +147,19 @@ Module.register("MMM-TTS", {
         this.sendSocketNotification("MMM-TTS-NOTIFICATION_TEST", data);
     },
 
+    notificationReceived: function(notification, payload, sender) {
+	if (notification === 'MMM-TTS') {
+		this.sendSocketNotification("MMM-TTS", payload);
+	}
+    },
+
     // socketNotificationReceived from helper
     socketNotificationReceived: function (notification, payload) {
-        if (notification === "MMM-TTS-NOTIFICATION_TEST") {
+        if (notification === "PLAY_SOUND") {
             // set dataNotification
-            this.dataNotification = payload;
-            this.updateDom();
+	      this.sendNotification('PLAY_SOUND', payload);
+//            this.dataNotification = payload;
+//            this.updateDom();
         }
     },
 });
