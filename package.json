@@ -1,0 +1,22 @@
+{
+  "name": "MMM-TTS",
+  "version": "1.0.0",
+  "description": "Todo: Insert description here!",
+  "main": "MMM-TTS.js",
+  "author": "Krzysztof Błachowicz",
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "latest",
+    "grunt-eslint": "latest",
+    "grunt-jsonlint": "latest",
+    "grunt-markdownlint": "^1.0.13",
+    "grunt-stylelint": "latest",
+    "grunt-yamllint": "latest",
+    "stylelint-config-standard": "latest",
+    "time-grunt": "latest"
+  },
+  "dependencies": {
+    "google-tts-api": "0.0.4",
+    "node-lame": "^1.2.2"
+  }
+}
