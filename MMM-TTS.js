@@ -155,11 +155,8 @@ Module.register("MMM-TTS", {
 
     // socketNotificationReceived from helper
     socketNotificationReceived: function (notification, payload) {
-        if (notification === "PLAY_SOUND") {
-            // set dataNotification
+        if (notification === "MMM-TTS-PLAY_SOUND") {
 	      this.sendNotification('PLAY_SOUND', payload);
-//            this.dataNotification = payload;
-//            this.updateDom();
         }
     },
 });

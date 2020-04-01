@@ -55,15 +55,19 @@ module.exports = NodeHelper.create({
         });
     },
 
-   tts: function (text) {
+    tts: function (text) {
         var that = this;
         var fileName = md5(text);
         var destDir = path.resolve(__dirname, '../MMM-Sounds/sounds/tts/');
         if (!fs.existsSync(destDir)) {
             fs.mkdirSync(destDir);
         }
-        var destFile = path.resolve(__dirname, fileName + '.mp3'); // file destination
         var outFile = path.resolve(destDir, fileName + '.wav');
+        if (fs.existsSync(outFile)) {
+            that.sendSocketNotification('MMM-TTS-PLAY_SOUND', 'tts/' + fileName + '.wav');
+            return;
+        }
+        var destFile = path.resolve(__dirname, fileName + '.mp3'); // file destination
         googleTTS(text, 'pl', 1)
                 .then((url) => {
                     console.log(url); // https://translate.google.com/translate_tts?...
@@ -72,24 +76,27 @@ module.exports = NodeHelper.create({
                 })
                 .then(() => {
                     console.log('Download success');
-//                    console.log(that);
+                    // Mp3 to WAV
                     const Lame = require("node-lame").Lame;
                     const decoder = new Lame({
                         output: outFile
                     }).setFile(destFile);
-                    decoder.decode().then(function() {
-                        that.sendSocketNotification('PLAY_SOUND', 'tts/' + fileName + '.wav');
-                    })
-                    .catch(error => {
-                        // Something went wrong
-                        console.log(error);
-                    });;
+                    decoder.decode()
+                            .then(function () {
+                                fs.unlink(destFile);
+                                // Play file
+                                that.sendSocketNotification('MMM-TTS-PLAY_SOUND', 'tts/' + fileName + '.wav');
+                            })
+                            .catch(error => {
+                                // Something went wrong
+                                console.log(error);
+                            });
+                    ;
                 })
                 .catch(function (err) {
                     console.error(err.stack);
                 });
     },
-
 
     // Override socketNotificationReceived method.
 
@@ -100,7 +107,7 @@ module.exports = NodeHelper.create({
      * argument payload mixed - The payload of the notification.
      */
     socketNotificationReceived: function (notification, payload) {
-	console.log("Dupa: " +  notification);
+        console.log("Dupa: " + notification);
         if (notification === "MMM-TTS") {
             console.log("Working notification system. Notification:", notification, "payload: ", payload);
             // Send notification
