@@ -16,8 +16,8 @@ Module.register("MMM-TTS", {
     requiresVersion: "2.1.0", // Required version of MagicMirror
 
     start: function () {
-        // Flag for check if module is loaded
-        this.loaded = false;
+        Log.info('Starting module: ' + this.name);
+        this.sendSocketNotification('CONFIG', this.config);
     },
 
     getScripts: function () {

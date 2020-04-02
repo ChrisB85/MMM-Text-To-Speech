@@ -17,6 +17,8 @@ var googleTTS = require('google-tts-api');
 var md5 = require('md5');
 
 module.exports = NodeHelper.create({
+    isLoaded: false,
+    config: null,
 
     downloadFile: function (url, dest) {
         return new Promise(function (resolve, reject) {
@@ -99,7 +101,12 @@ module.exports = NodeHelper.create({
 
     // Override socketNotificationReceived method.
     socketNotificationReceived: function (notification, payload) {
-        if (notification === "MMM-TTS") {
+        if (notification === 'CONFIG') {
+            if (!this.isLoaded) {
+                this.config = payload;
+                this.isLoaded = true;
+            }
+        } else if (notification === "MMM-TTS") {
             this.tts(payload);
         }
     }
