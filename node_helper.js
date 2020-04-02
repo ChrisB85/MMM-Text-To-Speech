@@ -68,7 +68,7 @@ module.exports = NodeHelper.create({
             return;
         }
         var destFile = path.resolve(destDir, fileName + '.mp3'); // file destination
-        googleTTS(text, 'pl', 1)
+        googleTTS(text, self.config.language, self.config.speed)
                 .then((url) => {
                     console.log(url); // https://translate.google.com/translate_tts?...
                     console.log('Download to ' + destFile + ' ...');

@@ -9,8 +9,8 @@
 
 Module.register("MMM-TTS", {
     defaults: {
-        updateInterval: 60000,
-        retryDelay: 5000
+        language: 'en',
+        speed: 1
     },
 
     requiresVersion: "2.1.0", // Required version of MagicMirror
