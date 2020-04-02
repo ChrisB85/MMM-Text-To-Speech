@@ -28,7 +28,7 @@ module.exports = NodeHelper.create({
                 host: info.host,
                 path: info.path,
                 headers: {
-                    'user-agent': 'WHAT_EVER'
+                    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36'
                 }
             };
             httpClient.get(options, function (res) {
@@ -71,10 +71,10 @@ module.exports = NodeHelper.create({
         }
         var destFile = path.resolve(destDir, fileName + '.mp3'); // file destination
         googleTTS(text, self.config.language, self.config.speed)
-                .then((url) => {
+                .then(function (url) {
                     console.log(url); // https://translate.google.com/translate_tts?...
                     console.log('Download to ' + destFile + ' ...');
-                    return this.downloadFile(url, destFile);
+                    return self.downloadFile(url, destFile);
                 })
                 .then(() => {
                     console.log('Download success');
@@ -101,13 +101,18 @@ module.exports = NodeHelper.create({
 
     // Override socketNotificationReceived method.
     socketNotificationReceived: function (notification, payload) {
-        if (notification === 'CONFIG') {
-            if (!this.isLoaded) {
-                this.config = payload;
-                this.isLoaded = true;
-            }
-        } else if (notification === "MMM-TTS") {
-            this.tts(payload);
+        switch (notification) {
+            case 'CONFIG':
+                if (!this.isLoaded) {
+                    this.config = payload;
+                    this.isLoaded = true;
+                }
+                break;
+            case 'MMM-TTS':
+                this.tts(payload);
+                break;
+            default:
+                break;
         }
     }
 });
