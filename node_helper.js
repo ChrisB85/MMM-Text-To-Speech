@@ -56,7 +56,7 @@ module.exports = NodeHelper.create({
     },
 
     tts: function (text) {
-        var that = this;
+        var self = this;
         var fileName = md5(text);
         var destDir = path.resolve(__dirname, '../MMM-Sounds/sounds/tts/');
         if (!fs.existsSync(destDir)) {
@@ -64,7 +64,7 @@ module.exports = NodeHelper.create({
         }
         var outFile = path.resolve(destDir, fileName + '.wav');
         if (fs.existsSync(outFile)) {
-            that.sendSocketNotification('MMM-TTS-PLAY_SOUND', 'tts/' + fileName + '.wav');
+            self.sendSocketNotification('MMM-TTS-PLAY_SOUND', 'tts/' + fileName + '.wav');
             return;
         }
         var destFile = path.resolve(destDir, fileName + '.mp3'); // file destination
@@ -84,7 +84,7 @@ module.exports = NodeHelper.create({
                     decoder.decode()
                             .then(function () {
                                 // Play file
-                                that.sendSocketNotification('MMM-TTS-PLAY_SOUND', 'tts/' + fileName + '.wav');
+                                self.sendSocketNotification('MMM-TTS-PLAY_SOUND', 'tts/' + fileName + '.wav');
                             })
                             .catch(error => {
                                 // Something went wrong
@@ -98,39 +98,9 @@ module.exports = NodeHelper.create({
     },
 
     // Override socketNotificationReceived method.
-
-    /* socketNotificationReceived(notification, payload)
-     * This method is called when a socket notification arrives.
-     *
-     * argument notification string - The identifier of the noitication.
-     * argument payload mixed - The payload of the notification.
-     */
     socketNotificationReceived: function (notification, payload) {
-        console.log("Dupa: " + notification);
         if (notification === "MMM-TTS") {
-            console.log("Working notification system. Notification:", notification, "payload: ", payload);
-            // Send notification
             this.tts(payload);
         }
-    },
-
-    // Example function send notification test
-    sendNotificationTest: function (payload) {
-//        this.sendSocketNotification("MMM-TTS", payload);
-    },
-
-    // this you can create extra routes for your module
-    extraRoutes: function () {
-        var self = this;
-        this.expressApp.get("/MMM-TTS/extra_route", function (req, res) {
-            // call another function
-            values = self.anotherFunction();
-            res.send(values);
-        });
-    },
-
-    // Test another function
-    anotherFunction: function () {
-        return {date: new Date()};
     }
 });
