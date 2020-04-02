@@ -10,7 +10,8 @@
 Module.register("MMM-TTS", {
     defaults: {
         language: 'en',
-        speed: 1
+        speed: 1,
+        soundModuleDir: 'MMM-Sounds'
     },
 
     requiresVersion: "2.1.0", // Required version of MagicMirror

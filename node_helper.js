@@ -60,7 +60,7 @@ module.exports = NodeHelper.create({
     tts: function (text) {
         var self = this;
         var fileName = md5(text);
-        var destDir = path.resolve(__dirname, '../MMM-Sounds/sounds/tts/');
+        var destDir = path.resolve(__dirname, '../' + self.config.soundModuleDir + '/sounds/tts/');
         if (!fs.existsSync(destDir)) {
             fs.mkdirSync(destDir);
         }
