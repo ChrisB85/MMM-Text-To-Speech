@@ -15,7 +15,7 @@ It uses external [MMM-Sounds](https://github.com/jc21/MMM-Sounds) module to play
 var config = {
     modules: [
         {
-            module: 'MMM-TTS',
+            module: 'MMM-Text-To-Speech',
             config: {
                 // See below for configurable options
             }
