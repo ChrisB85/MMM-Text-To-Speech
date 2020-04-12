@@ -38,7 +38,10 @@ Module.register("MMM-Text-To-Speech", {
     },
 
     notificationReceived: function (notification, payload, sender) {
-        if (notification === "MMM-Text-To-Speech") {
+        if (
+            notification === "MMM-Text-To-Speech" ||
+            notification === "MMM-TTS"
+        ) {
             this.sendSocketNotification("MMM-Text-To-Speech", payload);
         }
     },

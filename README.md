@@ -24,6 +24,14 @@ var config = {
     ]
 }
 ```
+4. Send notification with text as payload:
+```
+this.sendNotification("MMM-Text-To-Speech", "Hello " + payload);
+```
+or 
+```
+this.sendNotification("MMM-TTS", "Hello " + payload);
+```
 
 ## Configuration options
 
