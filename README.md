@@ -1,16 +1,17 @@
 # MMM-Text-To-Speech
 
-This is a Text-To-Speech module for the [MagicMirror²](https://github.com/MichMich/MagicMirror/).
+Text-To-Speech module for the [MagicMirror²](https://github.com/MichMich/MagicMirror/).
 
 ## Prerequisites
 
-It uses external [MMM-Sounds](https://github.com/jc21/MMM-Sounds) module to play sound, so you must install it first.
+1. It uses external [MMM-Sounds](https://github.com/jc21/MMM-Sounds) module to play sound, so you must install it first.
+2. If you don't have LAME package on your system, follow the [instructions](https://www.npmjs.com/package/node-lame#install-on-debian) to install it
 
 ## Using the module
 
 1. Navigate into your MagicMirror's `modules` folder and execute `git clone https://github.com/jc21/MMM-Sounds.git`
-
-2. Sdd the following configuration block to the modules array in the `config/config.js` file:
+2. Go to MMM-Text-To-Speech directory and run `npm install`
+3. Add the following configuration block to the modules array in the `config/config.js` file:
 ```js
 var config = {
     modules: [
