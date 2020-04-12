@@ -1,4 +1,4 @@
-# MMM-TTS
+# MMM-Text-To-Speech
 
 This is a Text-To-Speech module for the [MagicMirror²](https://github.com/MichMich/MagicMirror/).
 
