@@ -1,12 +1,16 @@
 # MMM-TTS
 
-This is a module for the [MagicMirror²](https://github.com/MichMich/MagicMirror/).
+This is a Text-To-Speech module for the [MagicMirror²](https://github.com/MichMich/MagicMirror/).
 
-Todo: Insert description here!
+## Prerequisites
+
+It uses external [MMM-Sounds](https://github.com/jc21/MMM-Sounds) module to play sound, so you must install it first.
 
 ## Using the module
 
-To use this module, add the following configuration block to the modules array in the `config/config.js` file:
+1. Navigate into your MagicMirror's `modules` folder and execute `git clone https://github.com/jc21/MMM-Sounds.git`
+
+2. Sdd the following configuration block to the modules array in the `config/config.js` file:
 ```js
 var config = {
     modules: [
@@ -24,5 +28,6 @@ var config = {
 
 | Option           | Description
 |----------------- |-----------
-| `option1`        | *Required* DESCRIPTION HERE
-| `option2`        | *Optional* DESCRIPTION HERE TOO <br><br>**Type:** `int`(milliseconds) <br>Default 60000 milliseconds (1 minute)
+| `language`        | *Optional* Speech language. Defaults to `en`.
+| `speed`        | *Optional* Speech speed.
+| `soundModuleDir`        | *Optional* Name of sound module folder. Defaults to `MMM-Sounds`.
