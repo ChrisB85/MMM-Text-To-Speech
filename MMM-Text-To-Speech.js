@@ -1,13 +1,13 @@
 /* global Module */
 
 /* Magic Mirror
- * Module: MMM-TTS
+ * Module: MMM-Text-To-Speech
  *
  * By Krzysztof Błachowicz
  * MIT Licensed.
  */
 
-Module.register("MMM-TTS", {
+Module.register("MMM-Text-To-Speech", {
     defaults: {
         language: 'en',
         speed: 1,
@@ -27,7 +27,7 @@ Module.register("MMM-TTS", {
 
     getStyles: function () {
         return [
-            "MMM-TTS.css",
+            "MMM-Text-To-Speech.css",
         ];
     },
 
@@ -40,14 +40,14 @@ Module.register("MMM-TTS", {
     },
 
     notificationReceived: function (notification, payload, sender) {
-        if (notification === 'MMM-TTS') {
-            this.sendSocketNotification("MMM-TTS", payload);
+        if (notification === 'MMM-Text-To-Speech') {
+            this.sendSocketNotification("MMM-Text-To-Speech", payload);
         }
     },
 
     // socketNotificationReceived from helper
     socketNotificationReceived: function (notification, payload) {
-        if (notification === "MMM-TTS-PLAY_SOUND") {
+        if (notification === "MMM-Text-To-Speech-PLAY_SOUND") {
             this.sendNotification('PLAY_SOUND', payload);
         }
     },

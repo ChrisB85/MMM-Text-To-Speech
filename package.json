@@ -2,7 +2,7 @@
   "name": "MMM-Text-To-Speech",
   "version": "1.0.0",
   "description": "Todo: Insert description here!",
-  "main": "MMM-TTS.js",
+  "main": "MMM-Text-To-Speech.js",
   "author": "Krzysztof Błachowicz",
   "license": "MIT",
   "devDependencies": {

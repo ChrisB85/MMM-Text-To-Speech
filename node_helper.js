@@ -1,5 +1,5 @@
 /* Magic Mirror
- * Node Helper: MMM-TTS
+ * Node Helper: MMM-Text-To-Speech
  *
  * By Krzysztof Błachowicz
  * MIT Licensed.
@@ -66,7 +66,7 @@ module.exports = NodeHelper.create({
         }
         var outFile = path.resolve(destDir, fileName + '.wav');
         if (fs.existsSync(outFile)) {
-            self.sendSocketNotification('MMM-TTS-PLAY_SOUND', 'tts/' + fileName + '.wav');
+            self.sendSocketNotification('MMM-Text-To-Speech-PLAY_SOUND', 'tts/' + fileName + '.wav');
             return;
         }
         var destFile = path.resolve(destDir, fileName + '.mp3'); // file destination
@@ -86,7 +86,7 @@ module.exports = NodeHelper.create({
                     decoder.decode()
                             .then(function () {
                                 // Play file
-                                self.sendSocketNotification('MMM-TTS-PLAY_SOUND', 'tts/' + fileName + '.wav');
+                                self.sendSocketNotification('MMM-Text-To-Speech-PLAY_SOUND', 'tts/' + fileName + '.wav');
                             })
                             .catch(error => {
                                 // Something went wrong
@@ -108,7 +108,7 @@ module.exports = NodeHelper.create({
                     this.isLoaded = true;
                 }
                 break;
-            case 'MMM-TTS':
+            case 'MMM-Text-To-Speech':
                 this.tts(payload);
                 break;
             default:
