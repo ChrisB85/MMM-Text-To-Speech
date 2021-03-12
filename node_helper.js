@@ -124,7 +124,7 @@ module.exports = NodeHelper.create({
                     .decode()
                     .then(function () {
                         // Delete MP3 file
-                        fs.unlink(destFile);
+                        fs.unlinkSync(destFile);
                         // Play WAV file
                         self.sendSocketNotification(
                             "MMM-Text-To-Speech-PLAY_SOUND",
