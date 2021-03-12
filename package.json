@@ -16,8 +16,10 @@
         "time-grunt": "latest"
     },
     "dependencies": {
-        "google-tts-api": "0.0.4",
+        "google-tts-api": "2.0.0",
         "md5": "^2.2.1",
-        "node-lame": "^1.2.2"
+        "mqtt": "^4.2.6",
+        "mqtt-packet": "^6.9.0",
+        "node-lame": "^1.2.4"
     }
 }

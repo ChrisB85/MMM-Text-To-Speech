@@ -12,6 +12,7 @@ Module.register("MMM-Text-To-Speech", {
         language: "en",
         speed: 1,
         soundModuleDir: "MMM-Sounds",
+        mqttServer: {}
     },
 
     requiresVersion: "2.1.0", // Required version of MagicMirror
@@ -51,5 +52,5 @@ Module.register("MMM-Text-To-Speech", {
         if (notification === "MMM-Text-To-Speech-PLAY_SOUND") {
             this.sendNotification("PLAY_SOUND", payload);
         }
-    },
+    }
 });

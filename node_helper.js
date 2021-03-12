@@ -1,4 +1,5 @@
-/* Magic Mirror
+/**
+ * Magic Mirror
  * Node Helper: MMM-Text-To-Speech
  *
  * By Krzysztof Błachowicz
@@ -8,18 +9,24 @@
 require("es6-promise").polyfill();
 
 var NodeHelper = require("node_helper");
-var fs = require("fs");
-var path = require("path");
-var http = require("http");
-var https = require("https");
-var urlParse = require("url").parse;
-var googleTTS = require("google-tts-api");
-var md5 = require("md5");
+const fs = require("fs");
+const path = require("path");
+const http = require("http");
+const https = require("https");
+const urlParse = require("url").parse;
+const googleTTS = require("google-tts-api");
+const md5 = require("md5");
+const mqtt = require('mqtt');
 
 module.exports = NodeHelper.create({
     isLoaded: false,
     config: null,
 
+    /**
+     * Downloads file and saves it at given location
+     * @param {String} url File URL to download
+     * @param {String} dest Local file path
+     */
     downloadFile: function (url, dest) {
         return new Promise(function (resolve, reject) {
             var info = urlParse(url);
@@ -39,12 +46,12 @@ module.exports = NodeHelper.create({
                         reject(
                             new Error(
                                 "request to " +
-                                    url +
-                                    " failed, status code = " +
-                                    res.statusCode +
-                                    " (" +
-                                    res.statusMessage +
-                                    ")"
+                                url +
+                                " failed, status code = " +
+                                res.statusCode +
+                                " (" +
+                                res.statusMessage +
+                                ")"
                             )
                         );
                         return;
@@ -69,7 +76,14 @@ module.exports = NodeHelper.create({
         });
     },
 
-    tts: function (text) {
+    /**
+     * Converts text to WAV file
+     * @param {String} text Text to say
+     * @param {Number} delay Delay in ms
+     * @param {Boolean} cache 
+     */
+    tts: function (text, delay = 0, cache = true) {
+        console.log(this.name + ': Downloading MP3 file for text: ', text);
         var self = this;
         var fileName = md5(text);
         var destDir = path.resolve(
@@ -83,19 +97,24 @@ module.exports = NodeHelper.create({
         if (fs.existsSync(outFile)) {
             self.sendSocketNotification(
                 "MMM-Text-To-Speech-PLAY_SOUND",
-                "tts/" + fileName + ".wav"
+                {
+                    sound: "tts/" + fileName + ".wav",
+                    delay: delay,
+                    cache: cache
+                }
             );
             return;
         }
-        var destFile = path.resolve(destDir, fileName + ".mp3"); // file destination
-        googleTTS(text, self.config.language, self.config.speed)
-            .then(function (url) {
-                console.log(url); // https://translate.google.com/translate_tts?...
-                console.log("Download to " + destFile + " ...");
-                return self.downloadFile(url, destFile);
-            })
+
+        var url = googleTTS.getAudioUrl(text, {
+            lang: self.config.language,
+            slow: false,
+            host: 'https://translate.google.com',
+        });
+        var destFile = path.resolve(destDir, fileName + ".mp3"); // File destination
+        self.downloadFile(url, destFile)
             .then(() => {
-                console.log("Download success");
+                console.log(this.name + ": Download success! File saved as " + destFile);
                 // Mp3 to WAV
                 const Lame = require("node-lame").Lame;
                 const decoder = new Lame({
@@ -104,10 +123,16 @@ module.exports = NodeHelper.create({
                 decoder
                     .decode()
                     .then(function () {
-                        // Play file
+                        // Delete MP3 file
+                        fs.unlink(destFile);
+                        // Play WAV file
                         self.sendSocketNotification(
                             "MMM-Text-To-Speech-PLAY_SOUND",
-                            "tts/" + fileName + ".wav"
+                            {
+                                sound: "tts/" + fileName + ".wav",
+                                delay: delay,
+                                cache: cache
+                            }
                         );
                     })
                     .catch((error) => {
@@ -127,6 +152,9 @@ module.exports = NodeHelper.create({
                 if (!this.isLoaded) {
                     this.config = payload;
                     this.isLoaded = true;
+                    if ('mqttServer' in this.config) {
+                        this.addServer(this.config.mqttServer);
+                    }
                 }
                 break;
             case "MMM-Text-To-Speech":
@@ -136,4 +164,72 @@ module.exports = NodeHelper.create({
                 break;
         }
     },
+
+    makeServerKey: function (server) {
+        return '' + server.address + ':' + (server.port | '1883' + server.user);
+    },
+
+    addServer: function (server) {
+        if (server.address == undefined) {
+            console.log(this.name + ': No MQTT server defined');
+            return false;
+        }
+        console.log(this.name + ': Adding server: ', server.address);
+        var serverKey = this.makeServerKey(server);
+        var mqttServer = {}
+        mqttServer.serverKey = serverKey;
+        mqttServer.address = server.address;
+        mqttServer.port = server.port;
+        mqttServer.options = {};
+        mqttServer.topics = [];
+        if (server.user) mqttServer.options.username = server.user;
+        if (server.password) mqttServer.options.password = server.password;
+
+        mqttServer.topics.push(server.topic);
+        this.startClient(mqttServer);
+    },
+
+    startClient: function (server) {
+
+        console.log(this.name + ': Starting client for: ', server.address);
+
+        var self = this;
+
+        var mqttServer = (server.address.match(/^mqtts?:\/\//) ? '' : 'mqtt://') + server.address;
+        if (server.port) {
+            mqttServer = mqttServer + ':' + server.port
+        }
+        console.log(self.name + ': Connecting to ' + mqttServer);
+
+        server.client = mqtt.connect(mqttServer, server.options);
+
+        server.client.on('error', (err) => {
+            console.log(self.name + ' ' + server.serverKey + ': Error: ' + err);
+        });
+
+        server.client.on('reconnect', (err) => {
+            server.value = 'Reconnecting'; // Hmmm...
+            console.log(self.name + ': ' + server.serverKey + ' reconnecting');
+        });
+
+        server.client.on('connect', (connack) => {
+            console.log(self.name + ' Connected to ' + mqttServer);
+            console.log(self.name + ': Subscribing to topic ' + server.topics);
+            server.client.subscribe(server.topics);
+        });
+
+        server.client.on('message', (topic, payload) => {
+            console.log(self.name + ' Recieved payload from topic ' + topic + ': ' + payload.toString());
+            try {
+                let object = JSON.parse(payload);
+                let text = object.text ? object.text : "";
+                let delay = object.delay ? object.delay : 0;
+                let cache = object.cache ? object.cache : true;
+                this.tts(text, delay, cache);
+            } catch (e) {
+                this.tts(payload.toString());
+            }
+        });
+
+    }
 });
