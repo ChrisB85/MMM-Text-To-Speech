@@ -93,8 +93,13 @@ module.exports = NodeHelper.create({
         if (!fs.existsSync(destDir)) {
             fs.mkdirSync(destDir);
         }
-        var outFile = path.resolve(destDir, fileName + ".wav");
+        var destFile = path.resolve(destDir, fileName + ".mp3"); // MP3 file
+        var outFile = path.resolve(destDir, fileName + ".wav"); // WAV file
         if (fs.existsSync(outFile)) {
+            if (fs.existsSync(destFile)) {
+                // Delete MP3 file
+                fs.unlinkSync(destFile);
+            }
             self.sendSocketNotification(
                 "MMM-Text-To-Speech-PLAY_SOUND",
                 {
@@ -111,7 +116,7 @@ module.exports = NodeHelper.create({
             slow: false,
             host: 'https://translate.google.com',
         });
-        var destFile = path.resolve(destDir, fileName + ".mp3"); // File destination
+
         self.downloadFile(url, destFile)
             .then(() => {
                 console.log(this.name + ": Download success! File saved as " + destFile);
