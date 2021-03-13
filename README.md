@@ -19,6 +19,10 @@ var config = {
             module: 'MMM-Text-To-Speech',
             config: {
                 // See below for configurable options
+                ...
+                mqttServer: {
+                ...
+                }
             }
         }
     ]
@@ -37,6 +41,13 @@ this.sendNotification("MMM-TTS", "Hello " + payload);
 
 | Option           | Description
 |----------------- |-----------
-| `language`        | *Optional* Speech language. Defaults to `en`.
-| `speed`        | *Optional* Speech speed.
-| `soundModuleDir`        | *Optional* Name of sound module folder. Defaults to `MMM-Sounds`.
+| `language`       | *Optional* Speech language. Defaults to `en`.
+| `speed`          | *Optional* Speech speed.
+| `soundModuleDir` | *Optional* Name of sound module folder. Defaults to `MMM-Sounds`.
+| `mqttServer`     | *Optional* MQTT server section:
+|                  | address: Server address or IP address
+|                  | port: Port, defaults to 1883
+|                  | user: User name
+|                  | password: Password
+|                  | topic: Topic to subscribe to
+
