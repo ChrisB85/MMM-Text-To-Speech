@@ -47,7 +47,7 @@ this.sendNotification("MMM-TTS", "Hello " + payload);
 | `mqttServer`     | *Optional* MQTT server section:
 |                  | `address` Host name or IP address
 |                  | `port` Port, defaults to 1883
-|                  | `user` User name
-|                  | `password` Password
 |                  | `topic` Topic to subscribe to
+|                  | `user` *Optional* User name
+|                  | `password` *Optional* Password
 
