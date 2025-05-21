@@ -16,6 +16,7 @@
         "time-grunt": "latest"
     },
     "dependencies": {
+        "es6-promise": "^4.2.8",
         "google-tts-api": "2.0.0",
         "md5": "^2.2.1",
         "mqtt": "^4.2.6",
