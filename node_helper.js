@@ -77,6 +77,33 @@ module.exports = NodeHelper.create({
     },
 
     /**
+     * Cleans up old TTS files, keeping only the 20 most recent ones
+     * @param {String} destDir Directory containing TTS files
+     */
+    cleanupOldFiles: function(destDir) {
+        try {
+            const files = fs.readdirSync(destDir)
+                .filter(file => file.endsWith('.wav'))
+                .map(file => ({
+                    name: file,
+                    time: fs.statSync(path.join(destDir, file)).mtime.getTime()
+                }))
+                .sort((a, b) => b.time - a.time);
+
+            // Keep only the 20 most recent files
+            if (files.length > 20) {
+                files.slice(20).forEach(file => {
+                    const filePath = path.join(destDir, file.name);
+                    fs.unlinkSync(filePath);
+                    console.log(this.name + ': Removed old TTS file: ' + file.name);
+                });
+            }
+        } catch (error) {
+            console.error(this.name + ': Error cleaning up old files:', error);
+        }
+    },
+
+    /**
      * Converts text to WAV file
      * @param {String} text Text to say
      * @param {Number} delay Delay in ms
@@ -132,6 +159,8 @@ module.exports = NodeHelper.create({
                             // Delete MP3 file
                             fs.unlinkSync(destFile);
                         }
+                        // Clean up old files
+                        self.cleanupOldFiles(destDir);
                         // Play WAV file
                         self.sendSocketNotification(
                             "MMM-Text-To-Speech-PLAY_SOUND",
